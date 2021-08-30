@@ -34,13 +34,15 @@ namespace PlainTextFileSearcher.Winforms
             
 
             List<String> list = new List<string>();
-
+            
 
             if (btnSearch.Text == SEARCH)
             {
                 btnSearch.Text = CANCEL;
 
-                list = SearchResultDataService.SearchForTextinDocumentsFromSelectedFile(tbxSearch.Text);
+                var content =  SearchResultDataService.SearchForTextinDocumentsFromSelectedFile(tbxSearch.Text);
+                tbxSearchResults.AppendText(content);
+
 
                 foreach (string line in list)
                 {

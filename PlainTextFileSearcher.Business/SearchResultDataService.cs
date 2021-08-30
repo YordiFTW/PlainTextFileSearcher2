@@ -58,12 +58,12 @@ namespace PlainTextFileSearcher.Business
 
         // Read the contents of the file.  
 
-        public static List<string> SearchForTextinDocumentsFromSelectedFile(string searchTerm)
+        public static string SearchForTextinDocumentsFromSelectedFile(string searchTerm)
         {
             List<string> list = new List<string>();
-
-
-            string[] textFile = File.ReadAllLines(@"C:\Users\Yordi\Downloads\main.html");
+            var content = "";
+                
+            string[] textFile = File.ReadAllLines(@"C:\Users\Yordi\source\repos\PlainTextFileSearcher2\articles\4\0\0\400_meter_horden.html");
 
 
             Parallel.ForEach(textFile, line =>
@@ -99,7 +99,11 @@ namespace PlainTextFileSearcher.Business
 
                     //list.Add(line);
 
-                    list.Add(line.Substring(charactersBeforeSearchTerm, charactersAfterSearchTerm - charactersBeforeSearchTerm));
+                    content = content + Environment.NewLine + line.Substring(charactersBeforeSearchTerm, charactersAfterSearchTerm - charactersBeforeSearchTerm);
+                    //list.Add(line.Substring(charactersBeforeSearchTerm, charactersAfterSearchTerm - charactersBeforeSearchTerm));
+                    //content += line.Substring(charactersBeforeSearchTerm,
+                    //    charactersAfterSearchTerm - charactersBeforeSearchTerm);
+                    //           content += Environment.NewLine;
                 }
             });
 
@@ -146,7 +150,7 @@ namespace PlainTextFileSearcher.Business
             //    }
             //}
 
-            return list; 
+            return content; 
         }
         static string GetFileText(string name)
         {
