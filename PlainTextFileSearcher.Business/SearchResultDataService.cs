@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace PlainTextFileSearcher.Business
 {
@@ -58,12 +59,13 @@ namespace PlainTextFileSearcher.Business
 
         // Read the contents of the file.  
 
-        public static string SearchForTextinDocumentsFromSelectedFile(string searchTerm, string startFolder)
+        public static (string , int , int)SearchForTextinDocumentsFromSelectedFile(string searchTerm, string startFolder)
         { 
 
             List<string> list = new List<string>();
             var content = "";
-
+            int filesWithMatches = 0;
+            int totalMatches = 0;
 
             System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(startFolder);
 
@@ -71,18 +73,20 @@ namespace PlainTextFileSearcher.Business
 
             Parallel.ForEach(fileList, file =>
             {
+                bool repeat = false;
                 string[] textFile = File.ReadAllLines(file.ToString());
-
-                foreach( var line in textFile)
-                { 
+                for (int i = 0; i < textFile.Length; i++)
+                {
+                    string line = textFile[i];
                     int charactersBeforeSearchTerm;
                     int charactersAfterSearchTerm;
                     int searchTermIndex;
-                    int LineIndex;
+                    string folderName;
 
 
                     if (line.Contains(searchTerm))
                     {
+                        totalMatches += 1;
                         searchTermIndex = line.IndexOf(searchTerm);
 
                         if (searchTermIndex - 20 <= 0)
@@ -104,11 +108,22 @@ namespace PlainTextFileSearcher.Business
                             charactersAfterSearchTerm = line.Length - searchTermIndex;
                         }
 
-                        
+
+                        folderName = file.FullName.Replace(startFolder, "");
 
                         //list.Add(line);
 
-                        content += Environment.NewLine + line.Substring(charactersBeforeSearchTerm, charactersAfterSearchTerm);
+                        //content += Environment.NewLine + fileName + Environment.NewLine + line.Substring(charactersBeforeSearchTerm, charactersAfterSearchTerm);
+                        if (repeat == false)
+                        {
+                            content += Environment.NewLine + Environment.NewLine + folderName;
+                            filesWithMatches += 1;
+                            repeat = true;
+                            
+                        }
+         
+                            content += Environment.NewLine + (i + 1)+ Environment.NewLine + line.Substring(charactersBeforeSearchTerm, charactersAfterSearchTerm);
+
                         //list.Add(line.Substring(charactersBeforeSearchTerm, charactersAfterSearchTerm - charactersBeforeSearchTerm));
                         //content += line.Substring(charactersBeforeSearchTerm,
                         //    charactersAfterSearchTerm - charactersBeforeSearchTerm);
@@ -165,7 +180,7 @@ namespace PlainTextFileSearcher.Business
             //    }
             //}
 
-            return content; 
+            return (content, totalMatches, filesWithMatches); 
         }
         static string GetFileText(string name)
         {
@@ -181,6 +196,8 @@ namespace PlainTextFileSearcher.Business
         }
 
         
+
+
     }
 }
 

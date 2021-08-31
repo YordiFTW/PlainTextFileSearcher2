@@ -51,16 +51,19 @@ namespace PlainTextFileSearcher.Winforms
                 lblTimePassedMs.Text = ts.Milliseconds.ToString() + " ms";
 
 
-                tbxSearchResults.AppendText(content);
+                tbxSearchResults.AppendText(content.Item1);
+
+                lblMatchesInFiles.Text = content.Item3.ToString();
+                lblTotalMatches.Text = content.Item2.ToString();
 
 
-                foreach (string line in list)
-                {
+                //foreach (string line in list)
+                //{
 
 
-                    tbxSearchResults.AppendText(line);
-                    tbxSearchResults.AppendText(Environment.NewLine);
-                }
+                //    tbxSearchResults.AppendText(line);
+                //    tbxSearchResults.AppendText(Environment.NewLine);
+                //}
                
 
 
