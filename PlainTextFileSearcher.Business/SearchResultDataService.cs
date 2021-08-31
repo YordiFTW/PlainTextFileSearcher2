@@ -58,54 +58,69 @@ namespace PlainTextFileSearcher.Business
 
         // Read the contents of the file.  
 
-        public static string SearchForTextinDocumentsFromSelectedFile(string searchTerm)
-        {
+        public static string SearchForTextinDocumentsFromSelectedFile(string searchTerm, string startFolder)
+        { 
+
             List<string> list = new List<string>();
             var content = "";
-                
-            string[] textFile = File.ReadAllLines(@"C:\Users\Yordi\source\repos\PlainTextFileSearcher2\articles\4\0\0\400_meter_horden.html");
 
 
-            Parallel.ForEach(textFile, line =>
+            System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(startFolder);
+
+            IEnumerable<System.IO.FileInfo> fileList = dir.GetFiles("*.*", System.IO.SearchOption.AllDirectories);
+
+            Parallel.ForEach(fileList, file =>
             {
-                int charactersBeforeSearchTerm;
-                int charactersAfterSearchTerm;
-                int searchTermIndex;
+                string[] textFile = File.ReadAllLines(file.ToString());
+
+                foreach( var line in textFile)
+                { 
+                    int charactersBeforeSearchTerm;
+                    int charactersAfterSearchTerm;
+                    int searchTermIndex;
+                    int LineIndex;
 
 
-                if (line.Contains(searchTerm))
-                {
-                    searchTermIndex = line.IndexOf(searchTerm);
-
-                    if (searchTermIndex - 20 <= 0)
+                    if (line.Contains(searchTerm))
                     {
-                        charactersBeforeSearchTerm = 0;
+                        searchTermIndex = line.IndexOf(searchTerm);
+
+                        if (searchTermIndex - 20 <= 0)
+                        {
+                            charactersBeforeSearchTerm = 0;
+                        }
+                        else
+                        {
+                            charactersBeforeSearchTerm = searchTermIndex - 20;
+                        }
+
+                        if (searchTermIndex + searchTerm.Length + 20 <= line.Length)
+                        {
+                            charactersAfterSearchTerm = searchTerm.Length + 20;
+                            if (charactersBeforeSearchTerm > 0) charactersAfterSearchTerm += 20;
+                        }
+                        else
+                        {
+                            charactersAfterSearchTerm = line.Length - searchTermIndex;
+                        }
+
+                        
+
+                        //list.Add(line);
+
+                        content += Environment.NewLine + line.Substring(charactersBeforeSearchTerm, charactersAfterSearchTerm);
+                        //list.Add(line.Substring(charactersBeforeSearchTerm, charactersAfterSearchTerm - charactersBeforeSearchTerm));
+                        //content += line.Substring(charactersBeforeSearchTerm,
+                        //    charactersAfterSearchTerm - charactersBeforeSearchTerm);
+                        //           content += Environment.NewLine;
                     }
-                    else
-                    {
-                        charactersBeforeSearchTerm = searchTermIndex - 20;
-                    }
-
-                    if (searchTermIndex + searchTerm.Length + 20 <= line.Length)
-                    {
-                        charactersAfterSearchTerm = searchTermIndex + searchTerm.Length + 20;
-                    }
-                    else
-                    {
-                        charactersAfterSearchTerm = line.Length;
-                    }
-
-
-
-                    //list.Add(line);
-
-                    content = content + Environment.NewLine + line.Substring(charactersBeforeSearchTerm, charactersAfterSearchTerm - charactersBeforeSearchTerm);
-                    //list.Add(line.Substring(charactersBeforeSearchTerm, charactersAfterSearchTerm - charactersBeforeSearchTerm));
-                    //content += line.Substring(charactersBeforeSearchTerm,
-                    //    charactersAfterSearchTerm - charactersBeforeSearchTerm);
-                    //           content += Environment.NewLine;
-                }
+                };
             });
+
+            //string[] textFile = File.ReadAllLines(@"C:\Users\Yordi\source\repos\PlainTextFileSearcher2\articles\4\0\0\400_meter_horden.html");
+
+
+            
 
 
 

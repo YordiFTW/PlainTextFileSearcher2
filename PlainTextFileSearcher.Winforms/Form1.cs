@@ -29,7 +29,7 @@ namespace PlainTextFileSearcher.Winforms
         public void btnSearch_Click(object sender, EventArgs e)
         {
             Stopwatch stopWatch = new Stopwatch();
-            stopWatch.Start();
+            
 
             
 
@@ -40,7 +40,17 @@ namespace PlainTextFileSearcher.Winforms
             {
                 btnSearch.Text = CANCEL;
 
-                var content =  SearchResultDataService.SearchForTextinDocumentsFromSelectedFile(tbxSearch.Text);
+                stopWatch.Start();
+
+                var content =  SearchResultDataService.SearchForTextinDocumentsFromSelectedFile(tbxSearch.Text, lblOpenedFolder.Text);
+
+                stopWatch.Stop();
+
+                TimeSpan ts = stopWatch.Elapsed;
+
+                lblTimePassedMs.Text = ts.Milliseconds.ToString() + " ms";
+
+
                 tbxSearchResults.AppendText(content);
 
 
@@ -51,14 +61,10 @@ namespace PlainTextFileSearcher.Winforms
                     tbxSearchResults.AppendText(line);
                     tbxSearchResults.AppendText(Environment.NewLine);
                 }
+               
 
 
 
-                stopWatch.Stop();
-
-                TimeSpan ts = stopWatch.Elapsed;
-
-                lblTimePassedMs.Text = ts.Milliseconds.ToString() + " ms";
             }
             else
             {
